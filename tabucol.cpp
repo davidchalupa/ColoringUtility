@@ -2,7 +2,7 @@
 
 #include "tabucol.h"
 
-long long tabucol(graph G, refer colors, int alpha, int A, int B, long long ls_length, long long t_max, int stage, long long *output_t)
+long long tabucol(graph G, refer colors, int alpha, int A, int B, long long t_max, int stage, refer *result)
 {
     long long t = 0;
     long long cycles = 0;
@@ -123,12 +123,16 @@ long long tabucol(graph G, refer colors, int alpha, int A, int B, long long ls_l
         t++;
     }
 
+    // copying the result
+    for (i=0;i<G->n;i++)
+    {
+        result[i] = tabu_searcher->get_solution()[i];
+    }
+
     // this is to free the dynamically allocated memory
     tabu_searcher->deinit();
 
     delete(tabu_searcher);
-
-    *output_t = t;
 
     return (! found);
 }

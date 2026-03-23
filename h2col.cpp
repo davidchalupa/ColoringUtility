@@ -14,6 +14,8 @@
 
 typedef tabu_base *p_tabu_base;
 
+#define MAX_COLORS 1050
+
 refer dist_mtx[MAX_COLORS][MAX_COLORS];
 refer M[MAX_COLORS];
 refer sigma[MAX_COLORS];

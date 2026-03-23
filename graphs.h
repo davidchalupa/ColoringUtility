@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include "common.h"
 
-//#define MAX_VERTICES 5000050
-#define MAX_VERTICES 50050
-#define MAX_COLORS 1050
-#define CLUSTERS_MAX 2000
+#define MAX_VERTICES 5000050
+#define MAX_VERTICES_ADJACENCY 3000
+#define MAX_EDGES_ADJACENCY 3000000
+#define MAX_EDGES_DRAWING 3000000
+#define MAX_TRIANGLES_AUTOMATIC 10000000
 
 typedef struct VERTEX
 {
@@ -23,17 +24,7 @@ typedef struct GRAPH_DATA
 } graph_data;
 typedef graph_data *graph;
 
-class cluster
-{
-public:
-    long genotype[MAX_VERTICES];
-    long length;
-    long long fitness;
-    long defects;
-    long parent;
-};
-
-int input_graph(FILE *source);
+int input_graph(FILE *source, const char *file_format);
 int output_graph(FILE *target);
 void free_graph();
 graph get_graph();

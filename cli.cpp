@@ -46,10 +46,9 @@ refer count_colors(graph G, refer *result)
     return max_label;
 }
 
-void cli::compute()
+void cli::compute(refer *coloring)
 {
     algorithm_brelaz *algorithm_brelaz_instance = new algorithm_brelaz();
-    refer *coloring = new refer[G->n];
 
     refer brelaz_colors = algorithm_brelaz_instance->brelaz_with_heap(G, coloring);
 
@@ -99,7 +98,7 @@ void cli::compute()
 
     algorithm_IGRLS_instance = new algorithm_igcol(G, brelaz_colors);
 
-    std::vector<unsigned long long> max_t_stag_configs = {100, 1000, 2500, 10000/*, 100000, 1000000*/};
+    std::vector<unsigned long long> max_t_stag_configs = {100, 1000, 2500, 5000, 10000, 20000/*, 100000, 1000000*/};
     refer coloring_size;
     refer best_lower_bound = 0;
     for (const auto max_t_stag : max_t_stag_configs)
@@ -122,6 +121,12 @@ void cli::compute()
             should_continue = true;
         }
 
+        // rather forcing continuing with small numbers of iterations
+        if (max_t_stag <= 2500)
+        {
+            should_continue = true;
+        }
+
         if (best_lower_bound == best_coloring_size || ! should_continue)
         {
             break;
@@ -130,11 +135,9 @@ void cli::compute()
 
     delete(algorithm_IGRLS_instance);
 
-    delete[](coloring);
-
     if (best_lower_bound == best_coloring_size)
     {
-        printf("Found an optimal coloring with %d colors!\n", coloring_size);
+        printf("Found an optimal coloring with %d colors!\n", best_coloring_size);
         return;
     }
 
@@ -145,6 +148,7 @@ void cli::compute()
     t_max = 100000;
     ls_length = 10000;
 
+    refer *potential_coloring = new refer[G->n];
 
     k = best_coloring_size - 1;
 
@@ -152,10 +156,14 @@ void cli::compute()
     while (best_lower_bound <= k)
     {
         printf("Starting k-fixed local search (k = %d)...\n", k);
-        if (0 == tabucol(G, k, 0, 0, 1, t_max, t_max, 0, &t))
+        if (0 == tabucol(G, k, 0, 0, 1, t_max, 0, potential_coloring))
         {
             printf("Found a coloring with %d colors.\n", k);
             best_coloring_size = k;
+            for (refer v = 0; v < G->n; v++)
+            {
+                coloring[v] = potential_coloring[v];
+            }
             k--;
         }
         else
@@ -167,29 +175,38 @@ void cli::compute()
     if (best_lower_bound == best_coloring_size)
     {
         printf("Found an optimal coloring with %d colors!\n", best_coloring_size);
+        delete[](potential_coloring);
         return;
     }
 
     while (best_lower_bound <= k)
     {
         printf("Starting TabuCol with dynamic tabu tenure (k = %d, t_max = %lld)...\n", k, t_max);
-        if (0 == tabucol(G, k, 6, 10, 1, ls_length, t_max, 0, &t))
+        if (0 == tabucol(G, k, 6, 10, 1, t_max, 0, potential_coloring))
         {
             printf("Found a coloring with %d colors.\n", k);
+            for (refer v = 0; v < G->n; v++)
+            {
+                coloring[v] = potential_coloring[v];
+            }
             best_coloring_size = k;
             k--;
             continue;
         }
         printf("Starting RLS_b with dynamic tabu tenure (k = %d, t_max = %lld)...\n", k, t_max);
-        if (0 == tabucol(G, k, 6, 10, 1, ls_length, t_max, 1, &t))
+        if (0 == tabucol(G, k, 6, 10, 1, t_max, 1, potential_coloring))
         {
             printf("Found a coloring with %d colors.\n", k);
+            for (refer v = 0; v < G->n; v++)
+            {
+                coloring[v] = potential_coloring[v];
+            }
             best_coloring_size = k;
             k--;
             continue;
         }
 //        printf("Starting RLS_a with dynamic tabu tenure (k = %d, t_max = %lld)...\n", k, t_max);
-//        if (0 == tabucol(G, k, 6, 10, 1, ls_length, t_max, 2, &t))
+//        if (0 == tabucol(G, k, 6, 10, 1, t_max, 2, coloring))
 //        {
 //            printf("Found a coloring with %d colors.\n", k);
 //            best_coloring_size = k;
@@ -202,6 +219,7 @@ void cli::compute()
     if (best_lower_bound == best_coloring_size)
     {
         printf("Found an optimal coloring with %d colors!\n", best_coloring_size);
+        delete[](potential_coloring);
         return;
     }
     else
@@ -216,8 +234,10 @@ void cli::compute()
     //if (0 == h2col(G, k, 6, 10, 0, t_max, &t, f))
     // the new coloring algorithm
     //if (0 == newcol(G, k, 6, 10, tabu_tenure, ls_length, t_max, ils_cycles_max, improvement_cycles_max, &t, f))
-}
 
+    delete[](potential_coloring);
+
+}
 
 int cli::start_cli(int argc, char **argv)
 {
@@ -244,6 +264,16 @@ int cli::start_cli(int argc, char **argv)
             sprintf(filename, "%s", argv[param_index+1]);
             param_index++;
         }
+        else if (! strcmp(argv[param_index], "--out"))
+        {
+            if (param_index+1 >= argc)
+            {
+                printf("Invalid number of parameters.\n");
+                return 1;
+            }
+            sprintf(filename_output, "%s", argv[param_index+1]);
+            param_index++;
+        }
         else
         {
             printf("Unknown argument %s.\n", argv[param_index]);
@@ -259,25 +289,41 @@ int cli::start_cli(int argc, char **argv)
 
     srand((unsigned) time(0));
 
-    FILE *f;
-
-    f = fopen(filename_output, "w");
-
     QTime qTime;
     qTime.start();
     double total_time = 0;
 
-    compute();
+    refer *coloring = new refer[G->n];
+
+    compute(coloring);
 
     total_time += qTime.elapsed() / 1000.0;
     printf("CPU time: %0.2lf s.\n", total_time);
+
+    printf("Saving the coloring found to: %s...\n", filename_output);
+
+    FILE *f;
+
+    f = fopen(filename_output, "w");
+
+    for (i=0;i<G->n;i++)
+    {
+        fprintf(f, "%u", coloring[i]);
+        if (G->n-1 != i)
+        {
+            fprintf(f, ",");
+        }
+    }
+    fprintf(f, "\n");
+
+    fclose(f);
+
+    delete[](coloring);
 
     if (NULL != G)
     {
         free_graph();
     }
-
-    fclose(f);
 
     return 0;
 }
@@ -317,7 +363,7 @@ int cli::choose_instance()
     {
         free_graph();
     }
-    input_graph(source);
+    input_graph(source, "col");
     fclose(source);
     G = get_graph();
 

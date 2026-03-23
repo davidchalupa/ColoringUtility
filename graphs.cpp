@@ -28,85 +28,170 @@ graph get_graph()
     return G;
 }
 
-int input_graph(FILE *source)
+int input_graph(FILE *source, const char *file_format)
 {
     char ch;
     unsigned long i, j;
     refer v,w;
     long long cnt = 0;
+    unsigned long real_m;
 
-    // comments
-    is_labeled = false;
-    while ((ch = fgetc(source)) == 'c')
+    // GML
+    if (! strcmp(file_format, "gml"))
     {
-        /*if (EOF != fscanf(source, "%u", &v) && (is_labeled || (! is_labeled && 1 == v)))
+        char line[5000];
+        long id, id2;
+        bool from_zero;
+
+        G = (graph) malloc (sizeof(graph_data));
+
+        G->n = 0;
+        G->m = 0;
+        from_zero = false;
+
+        // vertices and edges
+        while ((fscanf(source,"%s ",&line)) != EOF)
         {
-            fgets(&vertex_labels[v-1][0], MAX_VERTEX_LABEL, source);
-            is_labeled = true;
-            if ('\n' != vertex_labels[v-1][strlen(vertex_labels[v-1])-1])
+            if (! strcmp(line,"id"))
             {
-                while ((ch = fgetc(source)) != '\n');
+                fscanf(source,"%ld",&id);
+                if (id == 0)
+                {
+                    from_zero = true;
+                }
+                if (from_zero)
+                {
+                    G->n = ((id+1) > G->n) ? (id+1) : (G->n);
+                }
+                else
+                {
+                    G->n = (id > G->n) ? (id) : (G->n);
+                }
+            }
+
+            if (! strcmp(line,"source"))
+            {
+                fscanf(source,"%ld",&id);
+                fscanf(source,"%s ",&line);
+                fscanf(source,"%ld",&id2);
+                G->m++;
             }
         }
-        else
+
+        fseek(source, 0, SEEK_SET);
+
+        // allocation of the auxiliary space
+        E1 = new refer[2*G->m+1];
+        E2 = new refer[2*G->m+1];
+
+        // vertices and edges
+        while ((fscanf(source,"%s ",&line)) != EOF)
         {
-            while ((ch = fgetc(source)) != '\n');
-        }*/
-        while ((ch = fgetc(source)) != '\n');
-    }
+            if (! strcmp(line,"id"))
+            {
+                fscanf(source,"%ld",&id);
+            }
 
-    // overriding the string "p edge"
-    for (i=0;i<1;i++)
-    {
-        fgetc(source);
-    }
-    for (i=2;i<6;i++)
-    {
-        fgetc(source);
-    }
-
-    G = (graph) malloc (sizeof(graph_data));
-
-    if ((fscanf(source,"%u",&G->n)) == EOF)
-    {
-        return 1;
-    }
-    if ((fscanf(source,"%lu",&G->m)) == EOF)
-    {
-        return 1;
-    }
-
-    // allocation of the auxiliary space
-    E1 = new refer[2*G->m+1];
-    E2 = new refer[2*G->m+1];
-
-    // separator line
-    fgetc(source);
-
-    // loading the edges to auxiliary arrays
-    for (i=0;i<G->m;i++)
-    {
-        // new line and letter 'e'
-        fgetc(source);
-        fgetc(source);
-        if (fscanf(source,"%u",&v) == EOF)
-        {
-            break;
+            if (! strcmp(line,"source"))
+            {
+                fscanf(source,"%ld",&id);
+                fscanf(source,"%s ",&line);
+                fscanf(source,"%ld",&id2);
+                if (from_zero)
+                {
+                    v = id;
+                    w = id2;
+                }
+                else
+                {
+                    v = id - 1;
+                    w = id2 - 1;
+                }
+                E1[cnt] = v; E2[cnt] = w;
+                VEc[v]++; cnt++;
+                E1[cnt] = w; E2[cnt] = v;
+                VEc[w]++; cnt++;
+            }
         }
-        if (fscanf(source,"%u",&w) == EOF)
+    }
+    // COL
+    else
+    {
+        // comments
+        is_labeled = false;
+        while ((ch = fgetc(source)) == 'c')
         {
-            break;
+            if ((ch = fgetc(source)) != '\n')
+            {
+                ungetc(ch, source);
+                if (EOF != fscanf(source, "%u", &v) && (is_labeled || (! is_labeled && 1 == v)))
+                {
+                    fgets(&vertex_labels[v-1][0], MAX_VERTEX_LABEL, source);
+                    is_labeled = true;
+                    if ('\n' != vertex_labels[v-1][strlen(vertex_labels[v-1])-1])
+                    {
+                        while ((ch = fgetc(source)) != '\n');
+                    }
+                }
+                else
+                {
+                    while ((ch = fgetc(source)) != '\n');
+                }
+            }
         }
-        // we accept only one "direction"
-        v--; w--;
-        if (v != w)
+
+        // overriding the string "p edge"
+        for (i=0;i<1;i++)
         {
-            E1[cnt] = v; E2[cnt] = w;
-            VEc[v]++; cnt++;
-            E1[cnt] = w; E2[cnt] = v;
-            VEc[w]++; cnt++;
+            fgetc(source);
         }
+        for (i=2;i<6;i++)
+        {
+            fgetc(source);
+        }
+        G = (graph) malloc (sizeof(graph_data));
+
+        if ((fscanf(source,"%u",&G->n)) == EOF)
+        {
+            return 1;
+        }
+        if ((fscanf(source,"%lu",&G->m)) == EOF)
+        {
+            return 1;
+        }
+
+        // allocation of the auxiliary space
+        E1 = new refer[2*G->m+1];
+        E2 = new refer[2*G->m+1];
+
+        // separator line
         fgetc(source);
+
+        // loading the edges to auxiliary arrays
+        for (i=0;i<G->m;i++)
+        {
+            // new line and letter 'e'
+            fgetc(source);
+            fgetc(source);
+            if (fscanf(source,"%u",&v) == EOF)
+            {
+                break;
+            }
+            if (fscanf(source,"%u",&w) == EOF)
+            {
+                break;
+            }
+            // we accept only one "direction"
+            v--; w--;
+            if (v != w)
+            {
+                E1[cnt] = v; E2[cnt] = w;
+                VEc[v]++; cnt++;
+                E1[cnt] = w; E2[cnt] = v;
+                VEc[w]++; cnt++;
+            }
+            fgetc(source);
+        }
     }
 
     // allocation based on the computed degrees
@@ -116,7 +201,7 @@ int input_graph(FILE *source)
         G->V[i].sibl = (refer *) malloc (VEc[i]*sizeof(refer));
     }
     // insertion of data
-    unsigned long real_m = 0;
+    real_m = 0;
     for (j=0;j<cnt;j++)
     {
         v = E1[j]; w = E2[j];
@@ -230,12 +315,25 @@ bool are_adjacent(refer v, refer w)
     return false;
 }
 
+bool are_adjacent_full_scan(refer v, refer w)
+{
+    unsigned long i;
+
+    for (i=0;i<G->V[v].edgecount;i++)
+    {
+        if (w == G->V[v].sibl[i])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void generate_graph_BA_model(unsigned long w, unsigned long n_max)
 {
     unsigned long i;
     unsigned long j,q,r;
-
-    srand((unsigned long long) time(NULL));
 
     // alokujeme priestor pre graf
     G = (graph) malloc (sizeof(graph_data));
@@ -287,7 +385,6 @@ void generate_graph_BA_model(unsigned long w, unsigned long n_max)
     refer n = G->n;
     for (i=n;i<n_max;i++)
     {
-        G->V[i].edgecount = w;
         // roulette wheel preparation
         roulette[0] = 0;
         roulette_sum = 0;
@@ -317,19 +414,24 @@ void generate_graph_BA_model(unsigned long w, unsigned long n_max)
             }
             G->V[q].sibl[G->V[q].edgecount] = i;
             G->V[q].edgecount++;
+            QuickSort(G->V[q].sibl,0,G->V[q].edgecount-1);
         }
         G->n++;
         G->m += w;
+        G->V[i].edgecount = w;
+        QuickSort(G->V[i].sibl,0,G->V[i].edgecount-1);
     }
 
-    for (i=0;i<G->n;i++)
+    /*for (i=0;i<G->n;i++)
     {
         QuickSort(G->V[i].sibl,0,G->V[i].edgecount-1);
         if (G->V[i].edgecount > MAX_BA_DEGREE)
         {
             // ToDo: overflow handling!
         }
-    }
+    }*/
+
+    G->density = ((double)(G->m))/((double)(G->n*(G->n-1)/2));
 }
 
 void generate_graph_UDG(unsigned long n_max, unsigned long range, unsigned long grid)
@@ -401,6 +503,8 @@ void generate_graph_UDG(unsigned long n_max, unsigned long range, unsigned long 
     {
         QuickSort(G->V[i].sibl,0,G->V[i].edgecount-1);
     }
+
+    G->density = ((double)(G->m))/((double)(G->n*(G->n-1)/2));
 
     delete[](points_x);
     delete[](points_y);
@@ -517,6 +621,8 @@ void generate_graph_WS_model(refer n_max, refer k_half, double beta)
             // ToDo: overflow handling!
         }
     }
+
+    G->density = ((double)(G->m))/((double)(G->n*(G->n-1)/2));
 }
 
 
@@ -637,6 +743,8 @@ void generate_graph_grid(refer rows, refer columns, double beta)
             // ToDo: overflow handling!
         }
     }
+
+    G->density = ((double)(G->m))/((double)(G->n*(G->n-1)/2));
 }
 
 void generate_graph_complete_tree(refer branching_factor, refer depth)
@@ -693,6 +801,8 @@ void generate_graph_complete_tree(refer branching_factor, refer depth)
     {
         QuickSort(G->V[i].sibl,0,G->V[i].edgecount-1);
     }
+
+    G->density = ((double)(G->m))/((double)(G->n*(G->n-1)/2));
 
     delete[](parents);
 }

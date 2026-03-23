@@ -7,6 +7,18 @@
 
 #define MAX_VERTICES_TABU_BASE 50050
 
+#define CLUSTERS_MAX 2000
+
+class cluster
+{
+public:
+    long genotype[MAX_VERTICES];
+    long length;
+    long long fitness;
+    long defects;
+    long parent;
+};
+
 class tabu_base
 {
 private:
