@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include <QTime>
+#include <chrono>
 
 cli::cli()
 {
@@ -289,16 +289,17 @@ int cli::start_cli(int argc, char **argv)
 
     srand((unsigned) time(0));
 
-    QTime qTime;
-    qTime.start();
+    auto start = std::chrono::high_resolution_clock::now();
     double total_time = 0;
 
     refer *coloring = new refer[G->n];
 
     compute(coloring);
 
-    total_time += qTime.elapsed() / 1000.0;
+    auto end = std::chrono::high_resolution_clock::now();
+    total_time += std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
     printf("CPU time: %0.2lf s.\n", total_time);
+
 
     printf("Saving the coloring found to: %s...\n", filename_output);
 
