@@ -46,13 +46,21 @@ refer count_colors(graph G, refer *result)
     return max_label;
 }
 
-void cli::compute(refer *coloring)
+void cli::compute(refer *coloring, long long time_limit)
 {
+    auto start = std::chrono::high_resolution_clock::now();
+
     algorithm_brelaz *algorithm_brelaz_instance = new algorithm_brelaz();
 
     refer brelaz_colors = algorithm_brelaz_instance->brelaz_with_heap(G, coloring);
 
     printf("Found a solution with %d colors with Brelaz's heuristic.\n", brelaz_colors);
+
+    if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - start).count() > time_limit)
+    {
+        printf("Time limit exceeded.\n");
+        return;
+    }
 
     refer best_coloring_size = brelaz_colors;
 
@@ -69,6 +77,11 @@ void cli::compute(refer *coloring)
             best_coloring_size = brelaz_colors;
             printf("Found a solution with %d colors with Brelaz's heuristic.\n", brelaz_colors);
             trial_no_improve_index = 0;
+        }
+        if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - start).count() > time_limit)
+        {
+            printf("Time limit exceeded.\n");
+            return;
         }
         trial_no_improve_index++;
     }
@@ -121,6 +134,12 @@ void cli::compute(refer *coloring)
             should_continue = true;
         }
 
+        if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - start).count() > time_limit)
+        {
+            printf("Time limit exceeded.\n");
+            return;
+        }
+
         // rather forcing continuing with small numbers of iterations
         if (max_t_stag <= 2500)
         {
@@ -170,6 +189,12 @@ void cli::compute(refer *coloring)
         {
             break;
         }
+
+        if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - start).count() > time_limit)
+        {
+            printf("Time limit exceeded.\n");
+            return;
+        }
     }
 
     if (best_lower_bound == best_coloring_size)
@@ -193,6 +218,13 @@ void cli::compute(refer *coloring)
             k--;
             continue;
         }
+
+        if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - start).count() > time_limit)
+        {
+            printf("Time limit exceeded.\n");
+            return;
+        }
+
         printf("Starting RLS_b with dynamic tabu tenure (k = %d, t_max = %lld)...\n", k, t_max);
         if (0 == tabucol(G, k, 6, 10, 1, t_max, 1, potential_coloring))
         {
@@ -205,6 +237,13 @@ void cli::compute(refer *coloring)
             k--;
             continue;
         }
+
+        if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - start).count() > time_limit)
+        {
+            printf("Time limit exceeded.\n");
+            return;
+        }
+
 //        printf("Starting RLS_a with dynamic tabu tenure (k = %d, t_max = %lld)...\n", k, t_max);
 //        if (0 == tabucol(G, k, 6, 10, 1, t_max, 2, coloring))
 //        {
@@ -236,7 +275,6 @@ void cli::compute(refer *coloring)
     //if (0 == newcol(G, k, 6, 10, tabu_tenure, ls_length, t_max, ils_cycles_max, improvement_cycles_max, &t, f))
 
     delete[](potential_coloring);
-
 }
 
 int cli::start_cli(int argc, char **argv)
@@ -244,6 +282,8 @@ int cli::start_cli(int argc, char **argv)
     sprintf(filename_output, "out.txt");
 
     srand((unsigned long long) time(NULL));
+
+    long long time_limit = 600;
 
     if (argc < 2)
     {
@@ -274,6 +314,16 @@ int cli::start_cli(int argc, char **argv)
             sprintf(filename_output, "%s", argv[param_index+1]);
             param_index++;
         }
+        else if (! strcmp(argv[param_index], "--time-limit"))
+        {
+            if (param_index+1 >= argc)
+            {
+                printf("Invalid number of parameters.\n");
+                return 1;
+            }
+            time_limit = atoll(argv[param_index+1]);
+            param_index++;
+        }
         else
         {
             printf("Unknown argument %s.\n", argv[param_index]);
@@ -294,7 +344,7 @@ int cli::start_cli(int argc, char **argv)
 
     refer *coloring = new refer[G->n];
 
-    compute(coloring);
+    compute(coloring, time_limit);
 
     auto end = std::chrono::high_resolution_clock::now();
     total_time += std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
