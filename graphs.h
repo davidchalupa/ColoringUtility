@@ -3,26 +3,12 @@
 #include <stdio.h>
 #include "common.h"
 
-#define MAX_VERTICES 5000050
+#include "graphs_common.h"
+
 #define MAX_VERTICES_ADJACENCY 3000
 #define MAX_EDGES_ADJACENCY 3000000
 #define MAX_EDGES_DRAWING 3000000
 #define MAX_TRIANGLES_AUTOMATIC 10000000
-
-typedef struct VERTEX
-{
-    refer edgecount;
-    refer *sibl;
-} vertex;
-
-typedef struct GRAPH_DATA
-{
-    refer n;
-    unsigned long m;
-    double density;
-    vertex V[MAX_VERTICES];
-} graph_data;
-typedef graph_data *graph;
 
 int input_graph(FILE *source, const char *file_format);
 int output_graph(FILE *target);

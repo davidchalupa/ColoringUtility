@@ -29,6 +29,7 @@ HEADERS  += graphs.h \
     algorithm_igcol.h \
     common.h \
     cli.h \
+    graphs_common.h \
     statistics.h \
     random_generator.h \
     tabu_base.h \
@@ -46,3 +47,8 @@ QMAKE_CXXFLAGS -= -O1
 QMAKE_CFLAGS  *= -O3
 QMAKE_LFLAGS  *= -O3
 QMAKE_CXXFLAGS *= -O3
+
+DISTFILES += \
+    build_py.bat \
+    coloring.py \
+    setup.py
