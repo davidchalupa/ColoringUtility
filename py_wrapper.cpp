@@ -4,9 +4,11 @@
 // declaration of the graph type lives here
 #include "graphs_common.h"
 
+#include "compute.h"
+
 namespace py = pybind11;
 
-void process(py::object nx_graph) {
+void process(py::object nx_graph, long long time_limit) {
     // import networkx in C++ to access helper functions
     py::module_ nx = py::module_::import("networkx");
 
@@ -43,14 +45,21 @@ void process(py::object nx_graph) {
         }
     }
 
-    std::cout << "Nodes: " << g->n << ", Edges: " << g->m << ", Density: " << g->density << "\n";
-    for (int i = 0; i < g->n; ++i) {
-        std::cout << "Node " << i << " -> ";
-        for (int j = 0; j < g->V[i].edgecount; ++j) {
-            std::cout << g->V[i].sibl[j] << " ";
-        }
-        std::cout << "\n";
-    }
+//    std::cout << "Nodes: " << g->n << ", Edges: " << g->m << ", Density: " << g->density << "\n";
+//    for (int i = 0; i < g->n; ++i) {
+//        std::cout << "Node " << i << " -> ";
+//        for (int j = 0; j < g->V[i].edgecount; ++j) {
+//            std::cout << g->V[i].sibl[j] << " ";
+//        }
+//        std::cout << "\n";
+//    }
+
+    refer *coloring = new refer[g->n];
+
+    // call the solver
+    compute(g, coloring, time_limit);
+
+    delete[](coloring);
 
     // cleanup
     for (int i = 0; i < g->n; ++i) {
@@ -62,5 +71,11 @@ void process(py::object nx_graph) {
 PYBIND11_MODULE(coloring_utility, m) {
     m.doc() = "Python wrapper for ColoringUtility";
     // export of our wrapper function
-    m.def("process", &process, "Accepts a networkx graph and computes a coloring using the ColoringUtility solver");
+    m.def(
+        "process",
+        &process,
+        "Accepts a networkx graph and computes a coloring using the ColoringUtility solver",
+        py::arg("nx_graph"),
+        py::arg("time_limit") = 60
+    );
 }

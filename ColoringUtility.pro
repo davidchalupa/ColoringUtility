@@ -13,6 +13,7 @@ CONFIG += console
 SOURCES += main.cpp\
     algorithm_greedyclique.cpp \
     algorithm_igcol.cpp \
+    compute.cpp \
     graphs.cpp \
     common.cpp \
     cli.cpp \
@@ -29,6 +30,7 @@ HEADERS  += graphs.h \
     algorithm_igcol.h \
     common.h \
     cli.h \
+    compute.h \
     graphs_common.h \
     statistics.h \
     random_generator.h \

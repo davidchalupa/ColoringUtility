@@ -47,7 +47,6 @@ private:
     void usage();
     void process_params();
     void sleep(int milisec);
-    void compute(refer *coloring, long long time_limit);
 public:
     cli();
     int start_cli(int argc, char **argv);
