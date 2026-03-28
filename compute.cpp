@@ -24,6 +24,11 @@ refer count_colors(graph G, refer *result)
     return max_label;
 }
 
+refer get_tighter_lower_bound(graph G)
+{
+    return 0;
+}
+
 void compute(graph G, refer *coloring, long long time_limit)
 {
     auto start = std::chrono::high_resolution_clock::now();
@@ -85,6 +90,8 @@ void compute(graph G, refer *coloring, long long time_limit)
     // initializing the clique with greedy algorithm
     greedy_clique_size = algorithm_greedyclique_instance->greedy_clique(G, clique);
 
+    delete(algorithm_greedyclique_instance);
+
     // IG/RLS itself
 
     algorithm_IGRLS_instance = new algorithm_igcol(G, brelaz_colors);
@@ -137,6 +144,16 @@ void compute(graph G, refer *coloring, long long time_limit)
         printf("Found an optimal coloring with %d colors!\n", best_coloring_size);
         return;
     }
+
+//    printf("Attempting to tighten the lower bound...\n");
+
+//    refer new_lower_bound = get_tighter_lower_bound(G);
+
+//    if (new_lower_bound > best_lower_bound)
+//    {
+//        best_lower_bound = new_lower_bound;
+//        printf("Found a new lower bound of %d colors.\n", best_lower_bound);
+//    }
 
     long long t;
     int i;
