@@ -24,9 +24,112 @@ refer count_colors(graph G, refer *result)
     return max_label;
 }
 
-refer get_tighter_lower_bound(graph G)
-{
-    return 0;
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+// helper to perform vector-matrix multiplication: y = A * x
+void multiply_adj(graph G, double *x, double *y) {
+    for (refer i = 0; i < G->n; i++)
+    {
+        y[i] = 0.0;
+        for (refer j = 0; j < G->V[i].edgecount; j++)
+        {
+            refer neighbor = G->V[i].sibl[j];
+            y[i] += x[neighbor];
+        }
+    }
+}
+
+double get_max_eigenvalue(graph G, int shift_mode, double shift_val, int iterations) {
+    double *x = new double[G->n];
+    double *y = new double[G->n];
+
+    // initialize vector
+    for (refer i = 0; i < G->n; i++)
+    {
+        x[i] = (double) rand() / RAND_MAX;
+    }
+
+    double lambda = 0;
+    for (int it = 0; it < iterations; it++) {
+        multiply_adj(G, x, y);
+
+        // if shift_mode is active, we are calculating eigenvalues of (A - shift_val * I)
+        if (shift_mode) {
+            for (refer i = 0; i < G->n; i++)
+            {
+                y[i] -= shift_val * x[i];
+            }
+        }
+
+        // calculate norm and normalize
+        double norm = 0;
+        for (refer i = 0; i < G->n; i++)
+        {
+            norm += y[i] * y[i];
+        }
+        norm = sqrt(norm);
+        if (norm < 1e-9) break;
+
+        for (refer i = 0; i < G->n; i++)
+        {
+            x[i] = y[i] / norm;
+        }
+        lambda = norm;
+    }
+
+    // Rayleigh quotient to get the actual sign for the shifted version
+    double dot_top = 0, dot_bottom = 0;
+    multiply_adj(G, x, y);
+    if (shift_mode)
+    {
+        for (refer i = 0; i < G->n; i++) y[i] -= shift_val * x[i];
+    }
+    for (refer i = 0; i < G->n; i++)
+    {
+        dot_top += x[i] * y[i];
+        dot_bottom += x[i] * x[i];
+    }
+
+    delete[](x);
+    delete[](y);
+
+    return dot_top / dot_bottom;
+}
+
+refer spectral_lower_bound(graph G) {
+    if (G->n == 0)
+    {
+        return 0;
+    }
+    if (G->m == 0)
+    {
+        return 1;
+    }
+
+    // find lambda_max (usually around n * density)
+    double l_max = get_max_eigenvalue(G, 0, 0, 30);
+
+
+    // find lambda_min
+    // we shift the matrix by l_max to make the most negative eigenvalue
+    // the one with the largest absolute magnitude
+    double shifted_max = get_max_eigenvalue(G, 1, l_max, 30);
+    double l_min = shifted_max + l_max;
+
+    //    printf("l_max: %0.3lf\n", l_max);
+//    printf("l_min: %0.3lf\n", l_min);
+
+    if (fabs(l_min) < 1e-6)
+    {
+        // safety check
+        return (int) ceil(1.0 + l_max);
+    }
+
+    double bound = 1.0 + (l_max / fabs(l_min));
+
+    return (refer) ceil(bound);
 }
 
 void compute(graph G, refer *coloring, long long time_limit)
@@ -145,15 +248,15 @@ void compute(graph G, refer *coloring, long long time_limit)
         return;
     }
 
-//    printf("Attempting to tighten the lower bound...\n");
+    printf("Attempting to use Hoffman spectral lower bound...\n");
 
-//    refer new_lower_bound = get_tighter_lower_bound(G);
+    refer new_lower_bound = spectral_lower_bound(G);
 
-//    if (new_lower_bound > best_lower_bound)
-//    {
-//        best_lower_bound = new_lower_bound;
-//        printf("Found a new lower bound of %d colors.\n", best_lower_bound);
-//    }
+    if (new_lower_bound > best_lower_bound)
+    {
+        best_lower_bound = new_lower_bound;
+        printf("Found a new lower bound of %d colors.\n", best_lower_bound);
+    }
 
     long long t;
     int i;
