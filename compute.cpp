@@ -134,7 +134,7 @@ refer spectral_lower_bound(graph G) {
 
 void compute(graph G, refer *coloring, long long time_limit)
 {
-    auto start = std::chrono::high_resolution_clock::now();
+    std::chrono::system_clock::time_point start = std::chrono::high_resolution_clock::now();
 
     algorithm_brelaz *algorithm_brelaz_instance = new algorithm_brelaz();
 
@@ -205,7 +205,7 @@ void compute(graph G, refer *coloring, long long time_limit)
     for (const auto max_t_stag : max_t_stag_configs)
     {
         printf("Starting IG/RLS for graph coloring and maximum clique (max iter stag = %llu)...\n", max_t_stag);
-        algorithm_IGRLS_instance->igcol(G, false, coloring, &clique_size, clique, greedy_clique_size, max_t_stag);
+        algorithm_IGRLS_instance->igcol(G, false, coloring, &clique_size, clique, greedy_clique_size, max_t_stag, start, time_limit);
         coloring_size = count_colors(G, coloring);
 
         bool should_continue = false;
@@ -276,7 +276,7 @@ void compute(graph G, refer *coloring, long long time_limit)
     while (best_lower_bound <= k)
     {
         printf("Starting k-fixed local search (k = %d)...\n", k);
-        if (0 == tabucol(G, k, 0, 0, 1, t_max, 0, potential_coloring))
+        if (0 == tabucol(G, k, 0, 0, 1, t_max, 0, potential_coloring, start, time_limit))
         {
             printf("Found a coloring with %d colors.\n", k);
             best_coloring_size = k;
@@ -308,7 +308,7 @@ void compute(graph G, refer *coloring, long long time_limit)
     while (best_lower_bound <= k)
     {
         printf("Starting TabuCol with dynamic tabu tenure (k = %d, t_max = %lld)...\n", k, t_max);
-        if (0 == tabucol(G, k, 6, 10, 1, t_max, 0, potential_coloring))
+        if (0 == tabucol(G, k, 6, 10, 1, t_max, 0, potential_coloring, start, time_limit))
         {
             printf("Found a coloring with %d colors.\n", k);
             for (refer v = 0; v < G->n; v++)
@@ -327,7 +327,7 @@ void compute(graph G, refer *coloring, long long time_limit)
         }
 
         printf("Starting RLS_b with dynamic tabu tenure (k = %d, t_max = %lld)...\n", k, t_max);
-        if (0 == tabucol(G, k, 6, 10, 1, t_max, 1, potential_coloring))
+        if (0 == tabucol(G, k, 6, 10, 1, t_max, 1, potential_coloring, start, time_limit))
         {
             printf("Found a coloring with %d colors.\n", k);
             for (refer v = 0; v < G->n; v++)
@@ -346,7 +346,7 @@ void compute(graph G, refer *coloring, long long time_limit)
         }
 
 //        printf("Starting RLS_a with dynamic tabu tenure (k = %d, t_max = %lld)...\n", k, t_max);
-//        if (0 == tabucol(G, k, 6, 10, 1, t_max, 2, coloring))
+//        if (0 == tabucol(G, k, 6, 10, 1, t_max, 2, coloring, start, time_limit))
 //        {
 //            printf("Found a coloring with %d colors.\n", k);
 //            best_coloring_size = k;

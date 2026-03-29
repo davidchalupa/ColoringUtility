@@ -2,6 +2,8 @@
 #define ALGORITHM_IGCOL_H
 #include "algorithm.h"
 
+#include <chrono>
+
 class algorithm_igcol : public algorithm
 {
 private:
@@ -40,7 +42,7 @@ private:
 public:
     algorithm_igcol(graph G, refer max_colors);
     ~algorithm_igcol();
-    bool igcol(graph G, bool random_coloring_init, refer *result, refer *clique_size, refer *initial_clique, refer initial_clique_size, unsigned long long max_iter_stag_igcol);
+    bool igcol(graph G, bool random_coloring_init, refer *result, refer *clique_size, refer *initial_clique, refer initial_clique_size, unsigned long long max_iter_stag_igcol, std::chrono::system_clock::time_point &start_time, long long time_limit);
     bool greedy_col(graph G, refer *result, long *permutation);
     unsigned long long get_iterations();    
 };

@@ -2,7 +2,7 @@
 
 #include "tabucol.h"
 
-long long tabucol(graph G, refer colors, int alpha, int A, int B, long long t_max, int stage, refer *result)
+long long tabucol(graph G, refer colors, int alpha, int A, int B, long long t_max, int stage, refer *result, std::chrono::system_clock::time_point &start_time, long long time_limit)
 {
     long long t = 0;
     long long cycles = 0;
@@ -29,7 +29,7 @@ long long tabucol(graph G, refer colors, int alpha, int A, int B, long long t_ma
 
     while (1)
     {
-        if (t > t_max)
+        if (t > t_max || std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - start_time).count() > time_limit)
         {
 //            if (aux_output) printf("\n");
             break;

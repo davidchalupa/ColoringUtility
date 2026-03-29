@@ -115,7 +115,7 @@ void algorithm_igcol::initialization(long *permutation)
     }
 }
 
-bool algorithm_igcol::igcol(graph G, bool random_coloring_init, refer *result, refer *clique_size, refer *initial_clique, refer initial_clique_size, unsigned long long max_iter_stag_igcol)
+bool algorithm_igcol::igcol(graph G, bool random_coloring_init, refer *result, refer *clique_size, refer *initial_clique, refer initial_clique_size, unsigned long long max_iter_stag_igcol, std::chrono::system_clock::time_point &start_time, long long time_limit)
 {
     unsigned long long t,w,clique_it,t_stag,t_stag_max;
     long remainder;
@@ -197,6 +197,11 @@ bool algorithm_igcol::igcol(graph G, bool random_coloring_init, refer *result, r
     t_stag_max = max_iter_stag_igcol;
     while (t_stag < t_stag_max && fitness_clique < colors_count)
     {
+        if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - start_time).count() > time_limit)
+        {
+            break;
+        }
+
         colors_count_old = colors_count;
         fitness_clique_old = fitness_clique;
 

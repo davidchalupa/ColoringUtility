@@ -4,6 +4,8 @@
 #include "random_generator.h"
 #include "graphs.h"
 
+#include <chrono>
+
 class algorithm
 {
 protected:
@@ -16,7 +18,7 @@ public:
     virtual refer greedy_clique(graph, refer *) { return 0; }
     virtual bool iggcc_ccp(graph, refer *, refer *, refer *, refer) { return 0; }
     virtual refer greedydom(graph, bool *) { return 0; }
-    virtual bool igcol(graph, bool, refer *, refer *, refer *, refer, unsigned long long) { return 0; }
+    virtual bool igcol(graph, bool, refer *, refer *, refer *, refer, unsigned long long, std::chrono::system_clock::time_point &, long long) { return 0; }
 };
 
 #endif // ALGORITHM_H
