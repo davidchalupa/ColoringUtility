@@ -31,7 +31,7 @@ private:
     bool *is_in_clique;
     long *new_permutation;
     long *new_class_beginnings;
-    bool **color_neighbor_matrix;
+    refer **color_neighbor_matrix;
     long generate_state_inverse_greedy(long permutation[]);
     refer greedy_clique(graph G, long permutation_clique[]);
     void transform_representation(bool ignore_internal_positions=false);

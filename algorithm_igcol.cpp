@@ -24,10 +24,10 @@ algorithm_igcol::algorithm_igcol(graph G, refer max_colors)
     already_used_in_permutation = new bool[G->n+1];
 
     this->max_colors = max_colors;
-    color_neighbor_matrix = new bool*[G->n+1];
+    color_neighbor_matrix = new refer*[G->n+1];
     for (i=1;i<=max_colors;i++)
     {
-        color_neighbor_matrix[i] = new bool[G->n];
+        color_neighbor_matrix[i] = new refer[G->n];
     }
 }
 
