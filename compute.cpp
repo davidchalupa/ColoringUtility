@@ -134,7 +134,7 @@ refer spectral_lower_bound(graph G) {
 
 void compute(graph G, refer *coloring, long long time_limit)
 {
-    std::chrono::system_clock::time_point start = std::chrono::high_resolution_clock::now();
+    std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 
     algorithm_brelaz *algorithm_brelaz_instance = new algorithm_brelaz();
 

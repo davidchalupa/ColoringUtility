@@ -115,7 +115,7 @@ void algorithm_igcol::initialization(long *permutation)
     }
 }
 
-bool algorithm_igcol::igcol(graph G, bool random_coloring_init, refer *result, refer *clique_size, refer *initial_clique, refer initial_clique_size, unsigned long long max_iter_stag_igcol, std::chrono::system_clock::time_point &start_time, long long time_limit)
+bool algorithm_igcol::igcol(graph G, bool random_coloring_init, refer *result, refer *clique_size, refer *initial_clique, refer initial_clique_size, unsigned long long max_iter_stag_igcol, std::chrono::high_resolution_clock::time_point &start_time, long long time_limit)
 {
     unsigned long long t,w,clique_it,t_stag,t_stag_max;
     long remainder;
