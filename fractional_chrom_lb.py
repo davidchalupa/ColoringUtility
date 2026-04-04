@@ -8,7 +8,7 @@ import time
 # Preliminary algorithms
 # ----------------------
 
-def compute_fractional_chromatic_bound(G, max_iter=150, time_limit=300):
+def fractional_chromatic_column_generation_pure(G, max_iter=100000, time_limit=360000):
     """
     Computes a tight lower bound for the fractional chromatic number
     using Column Generation.
@@ -16,6 +16,7 @@ def compute_fractional_chromatic_bound(G, max_iter=150, time_limit=300):
     n = G.number_of_nodes()
     if n == 0:
         return 0.0
+    start_time = time.time()
 
     nodes = list(G.nodes())
     node_idx = {v: i for i, v in enumerate(nodes)}
@@ -58,7 +59,8 @@ def compute_fractional_chromatic_bound(G, max_iter=150, time_limit=300):
     print("-" * 65)
 
     for iteration in range(max_iter):
-        if time.time() - start_time > time_limit:
+        elapsed = time.time() - start_time
+        if elapsed > time_limit:
             print("\nTime limit reached. Halting early.")
             break
 
@@ -107,8 +109,11 @@ def compute_fractional_chromatic_bound(G, max_iter=150, time_limit=300):
         # 6. Check for Optimality
         # ---------------------------------------------------------
         # If no independent set has weight > 1, we have found the exact solution.
-        if W <= 1.000001:
-            print("\nOptimal fractional chromatic number found!")
+        if W <= 1.0000001:
+            print("-" * 85)
+            print(f"\n✅ PROVEN OPTIMALITY REACHED")
+            print(f"Exact Fractional Chromatic Number: {Z_rmp:.4f}")
+            print(f"Total Time: {elapsed:.2f} seconds")
             return Z_rmp, True
 
         # Add the new independent set as a column to the Master matrix
@@ -149,8 +154,10 @@ def greedy_mwis(G, weights):
         vec[v] = 1
     return vec, total_weight
 
-def compute_fractional_chromatic_bound_2(G, max_iter=200, time_limit=300):
+def fractional_chromatic_column_generation_with_greedy(G, max_iter=100000, time_limit=360000):
     n = G.number_of_nodes()
+    start_time = time.time()
+
     nodes = list(G.nodes())
 
     # Pre-build pricing constraints for MILP (the fallback)
@@ -170,7 +177,11 @@ def compute_fractional_chromatic_bound_2(G, max_iter=200, time_limit=300):
     print(f"{'Iter':<5} | {'Z_RMP':<10} | {'Method':<10} | {'W':<10} | {'Lower Bound':<10}")
 
     for iteration in range(max_iter):
-        if time.time() - start_time > time_limit: break
+        elapsed = time.time() - start_time
+
+        if time_limit and elapsed > time_limit:
+            print("\nTime limit reached.")
+            break
 
         # 1. Solve Master Dual
         res_dual = linprog(-np.ones(n), A_ub=A_master.T, b_ub=np.ones(A_master.shape[1]),
@@ -202,14 +213,15 @@ def compute_fractional_chromatic_bound_2(G, max_iter=200, time_limit=300):
             # If greedy, we don't have a mathematically proven lower bound yet
             current_lb = float('nan')
 
-        print(f"{iteration:<5} | {Z_rmp:<10.3f} | {method:<10} | {W:<10.3f} | {best_lb:<10.3f}")
+        print(f"{iteration:<5} | {Z_rmp:<10.4f} | {method:<10} | {W:<10.4f} | {best_lb:<10.4f}")
 
         # 5. Check for convergence
         if W <= 1.0000001:
-            print("\nOptimal fractional chromatic number found!")
-            best_lb = Z_rmp
-            is_exact = True
-            break
+            print("-" * 85)
+            print(f"\n✅ PROVEN OPTIMALITY REACHED")
+            print(f"Exact Fractional Chromatic Number: {Z_rmp:.4f}")
+            print(f"Total Time: {elapsed:.2f} seconds")
+            return Z_rmp, True
 
         A_master = np.hstack([A_master, y.reshape(-1, 1)])
 
@@ -309,7 +321,7 @@ def tabu_mwis(G, weights, max_steps=150):
 # 2. MAIN ALGORITHM
 # ==========================================
 
-def solve_fractional_chromatic(G, max_iter=None, time_limit=None):
+def fractional_chromatic_column_generation_fast(G, max_iter=None, time_limit=None):
     n = G.number_of_nodes()
     start_time = time.time()
 
@@ -427,7 +439,12 @@ def solve_fractional_chromatic(G, max_iter=None, time_limit=None):
 # 3. EXECUTION
 # ==========================================
 if __name__ == "__main__":
-    G = nx.erdos_renyi_graph(150, 0.1, seed=42)
+#    G = nx.erdos_renyi_graph(100, 0.1, seed=42)
 
-    # Run with NO limits by default
-    final_val, is_optimal = solve_fractional_chromatic(G, max_iter=None, time_limit=None)
+    n = 100
+    w = 4
+    G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
+
+#    final_val, is_optimal = fractional_chromatic_column_generation_pure(G)
+#    final_val, is_optimal = fractional_chromatic_column_generation_with_greedy(G)
+    final_val, is_optimal = fractional_chromatic_column_generation_fast(G, max_iter=None, time_limit=None)
