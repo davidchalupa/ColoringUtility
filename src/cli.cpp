@@ -91,9 +91,10 @@ int cli::start_cli(int argc, char **argv)
     auto start = std::chrono::high_resolution_clock::now();
     double total_time = 0;
 
+    refer lower_bound;
     refer *coloring = new refer[G->n];
 
-    compute(G, coloring, time_limit);
+    compute(G, coloring, lower_bound, time_limit);
 
     auto end = std::chrono::high_resolution_clock::now();
     total_time += std::chrono::duration_cast<std::chrono::seconds>(end - start).count();

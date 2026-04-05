@@ -132,7 +132,7 @@ refer spectral_lower_bound(graph G) {
     return (refer) ceil(bound);
 }
 
-void compute(graph G, refer *coloring, long long time_limit)
+void compute(graph G, refer *coloring, refer &best_lower_bound, long long time_limit)
 {
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 
@@ -201,7 +201,7 @@ void compute(graph G, refer *coloring, long long time_limit)
 
     std::vector<unsigned long long> max_t_stag_configs = {100, 1000, 2500, 5000, 10000, 20000/*, 100000, 1000000*/};
     refer coloring_size;
-    refer best_lower_bound = 0;
+    best_lower_bound = 0;
     for (const auto max_t_stag : max_t_stag_configs)
     {
         printf("Starting IG/RLS for graph coloring and maximum clique (max iter stag = %llu)...\n", max_t_stag);

@@ -10,8 +10,8 @@
 
 namespace py = pybind11;
 
-// Change return type from void to std::vector<refer>
-std::vector<refer> process(py::object nx_graph, long long time_limit) {
+// returning a vector of colors assigned and the best lower bound found
+std::pair<std::vector<refer>, refer> process(py::object nx_graph, long long time_limit) {
     // import networkx in C++ to access helper functions
     py::module_ nx = py::module_::import("networkx");
 
@@ -59,9 +59,10 @@ std::vector<refer> process(py::object nx_graph, long long time_limit) {
 
     // we will use std::vector instead of raw pointer here for native memory management
     std::vector<refer> coloring(g->n);
+    refer lower_bound;
 
     // call the solver. .data() passes the underlying raw refer* pointer
-    compute(g, coloring.data(), time_limit);
+    compute(g, coloring.data(), lower_bound, time_limit);
 
     // cleanup graph properties
     for (int i = 0; i < g->n; ++i) {
@@ -70,7 +71,7 @@ std::vector<refer> process(py::object nx_graph, long long time_limit) {
     delete g;
 
     // return the vector to Python (Pybind11 converts this to a list)
-    return coloring;
+    return {coloring, lower_bound};
 }
 
 PYBIND11_MODULE(coloring_utility, m) {

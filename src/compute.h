@@ -5,6 +5,6 @@
 
 #include "graphs_common.h"
 
-void compute(graph G, refer *coloring, long long time_limit);
+void compute(graph G, refer *coloring, refer &best_lower_bound, long long time_limit);
 
 #endif // COMPUTE_H

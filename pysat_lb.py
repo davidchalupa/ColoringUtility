@@ -45,19 +45,20 @@ def solve_k_coloring(G, k):
     else:
         return None
 
-#n = 100
-#w = 4
-#G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
+if __name__ == "__main__":
+    #n = 100
+    #w = 4
+    #G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
 
-#n = 100000
-#w = 4
-#G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
+    #n = 100000
+    #w = 4
+    #G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
 
-G = nx.erdos_renyi_graph(500, 0.1, seed=42)
+    G = nx.erdos_renyi_graph(500, 0.1, seed=42)
 
-k = 6
-result = solve_k_coloring(G, k)
-if result:
-    print(f"Valid {k}-coloring found!")
-else:
-    print(f"No {k}-coloring exists.")
+    k = 6
+    result = solve_k_coloring(G, k)
+    if result:
+        print(f"Valid {k}-coloring found!")
+    else:
+        print(f"No {k}-coloring exists.")
