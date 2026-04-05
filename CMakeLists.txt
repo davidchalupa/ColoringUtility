@@ -57,6 +57,8 @@ set(DIST_FILES
     build_py.bat
     coloring.py
     setup.py
+    fractional_chrom_lb.py
+    lovasz_theta_lb.py
 )
 source_group("DistFiles" FILES ${DIST_FILES})
 

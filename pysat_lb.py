@@ -53,7 +53,7 @@ def solve_k_coloring(G, k):
 #w = 4
 #G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
 
-G = nx.erdos_renyi_graph(200, 0.1, seed=42)
+G = nx.erdos_renyi_graph(500, 0.1, seed=42)
 
 k = 6
 result = solve_k_coloring(G, k)

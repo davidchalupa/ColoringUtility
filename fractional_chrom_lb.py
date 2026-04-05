@@ -439,11 +439,11 @@ def fractional_chromatic_column_generation_fast(G, max_iter=None, time_limit=Non
 # 3. EXECUTION
 # ==========================================
 if __name__ == "__main__":
-#    G = nx.erdos_renyi_graph(100, 0.1, seed=42)
+    G = nx.erdos_renyi_graph(500, 0.1, seed=42)
 
-    n = 100
-    w = 4
-    G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
+#    n = 100
+#    w = 4
+#    G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
 
 #    final_val, is_optimal = fractional_chromatic_column_generation_pure(G)
 #    final_val, is_optimal = fractional_chromatic_column_generation_with_greedy(G)
