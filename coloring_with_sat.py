@@ -1,11 +1,19 @@
 import networkx as nx
 import coloring_utility
 
-from pysat_lb import solve_k_coloring
+from tools import coloring_sat
+
+#n = 100
+#w = 3
+#G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
+
+#n = 100
+#w = 4
+#G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
 
 n = 100
-w = 4
-G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
+w = 5
+G = nx.barabasi_albert_graph(n=n, m=w, seed=442)
 
 #n = 100000
 #w = 4
@@ -28,7 +36,7 @@ try:
         print("Optimal solution not yet found. Attempting to close the gap with SAT...")
         k = lower_bound
         while k < unique_colors:
-            result = solve_k_coloring(G, k)
+            result = coloring_sat.solve_k_coloring(G, k)
             if result:
                 print(f"Valid {k}-coloring found!")
                 # ToDo: override the result from the C++ solver if SAT was better
@@ -38,6 +46,9 @@ try:
                 k += 1
                 lower_bound = k
         print(f"Improved lower bound: {lower_bound}")
+
+        if lower_bound == unique_colors:
+            print(f"Found an optimal coloring with {unique_colors} colors!")
 
     print("Colors:", colors)
 
