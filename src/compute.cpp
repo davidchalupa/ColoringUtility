@@ -10,6 +10,13 @@
 
 #include <chrono>
 
+#include <togasat.hpp>
+#include <vector>
+#include <chrono>
+#include <future>
+#include <thread>
+#include <iostream>
+
 refer count_colors(graph G, refer *result)
 {
     refer v,max_label;
@@ -130,6 +137,78 @@ refer spectral_lower_bound(graph G) {
     double bound = 1.0 + (l_max / fabs(l_min));
 
     return (refer) ceil(bound);
+}
+
+bool try_sat_based_lower_bound(graph G, refer k, long long time_limit) {
+    auto promise = std::make_shared<std::promise<togasat::lbool>>();
+    std::future<togasat::lbool> solve_future = promise->get_future();
+
+    std::thread worker([G, k, promise]() {
+        togasat::Solver solver;
+
+        auto get_var = [k](refer v_idx, refer c_idx) -> int {
+            return v_idx * k + c_idx + 1;
+        };
+
+        // 1. Each vertex must have at least one color
+        for (refer i = 0; i < G->n; ++i) {
+            std::vector<int> clause;
+            clause.reserve(k);
+            for (refer c = 0; c < k; ++c) {
+                clause.push_back(get_var(i, c));
+            }
+            solver.addClause(clause);
+        }
+
+        // 2. Each vertex must have at most one color
+        for (refer i = 0; i < G->n; ++i) {
+            for (refer c1 = 0; c1 < k; ++c1) {
+                for (refer c2 = c1 + 1; c2 < k; ++c2) {
+                    std::vector<int> clause = { -get_var(i, c1), -get_var(i, c2) };
+                    solver.addClause(clause);
+                }
+            }
+        }
+
+        // 3. Adjacent vertices cannot share a color
+        for (refer i = 0; i < G->n; ++i) {
+            for (refer j = 0; j < G->V[i].edgecount; ++j) {
+                refer neighbor = G->V[i].sibl[j];
+                if (i < neighbor) {
+                    for (refer c = 0; c < k; ++c) {
+                        std::vector<int> clause = { -get_var(i, c), -get_var(neighbor, c) };
+                        solver.addClause(clause);
+                    }
+                }
+            }
+        }
+
+        togasat::lbool result = solver.solve();
+
+        // set_value on a promise whose future has already been abandoned
+        // (timed out) is safe; the shared_ptr keeps the promise alive
+        // until this point regardless of the caller's state.
+        try {
+            promise->set_value(result);
+        } catch (const std::future_error&) {
+            // future already destroyed / no one listening — ignore
+        }
+    });
+    worker.detach();
+
+    auto status = solve_future.wait_for(std::chrono::seconds(time_limit));
+    if (status == std::future_status::timeout) {
+        std::cout << "SAT solver timed out after " << time_limit
+                   << " seconds for k=" << k << ".\n";
+        return false; // Could not prove UNSAT within the time limit
+    }
+
+    togasat::lbool result = solve_future.get();
+    if (result == togasat::l_False) {
+        return true;
+    }
+    printf("Found a solution with %d colors with SAT-based solver.\n", k);
+    return false;
 }
 
 void compute(graph G, refer *coloring, refer &best_lower_bound, long long time_limit)
@@ -303,6 +382,14 @@ void compute(graph G, refer *coloring, refer &best_lower_bound, long long time_l
         printf("Found an optimal coloring with %d colors!\n", best_coloring_size);
         delete[](potential_coloring);
         return;
+    }
+
+    // attempting to further tighten the lower bound with SAT
+    printf("Attempting to use a SAT-based lower bound...\n");
+    // ToDo: consider what to do if we do not have a time limit
+    while (try_sat_based_lower_bound(G, best_lower_bound, time_limit / 20)) {
+        best_lower_bound++;
+        printf("Found a new lower bound of %d colors.\n", best_lower_bound);
     }
 
     while (best_lower_bound <= k)

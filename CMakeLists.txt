@@ -65,3 +65,5 @@ source_group("DistFiles" FILES ${DIST_FILES})
 set_target_properties(ColoringUtility PROPERTIES
     WIN32_EXECUTABLE FALSE
 )
+
+target_include_directories(ColoringUtility PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
