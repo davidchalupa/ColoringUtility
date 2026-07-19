@@ -48,7 +48,9 @@ ColoringUtility uses several graph coloring algorithms, including:
 - TabuCol algorithm [3, 4]
 - RLS_b algorithm [5]
 
-It also implements a clique-based and a spectral lower bound.
+It also implements a clique-based lower bound, a spectral lower bound, and a SAT-based lower bound based on solver togasat:
+
+- https://github.com/togatoga/togasat
 
 ## References
 
