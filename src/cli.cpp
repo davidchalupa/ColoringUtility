@@ -17,9 +17,10 @@ void cli::sleep(int milisec)
 void cli::usage()
 {
     printf("This is a solver for the graph coloring instances.\n");
-    printf("Usage: ColoringUtility --in <input_file.col> --k <the_number_of_colors> --out <output_file.txt>\n\n");
+    printf("Usage: ColoringUtility --in <input_file.col> --k <the_number_of_colors> [--no-sat] [--out <output_file.txt>]\n\n");
     printf("       --in <input_file.col>: switch specifies the input file in COL format\n");
     printf("       --out <output_file.txt>: switch specifies the output file name\n");
+    printf("       --no-sat: turns off the computation of a lower bound using SAT solver\n");
 }
 
 void cli::process_params()
@@ -40,6 +41,7 @@ int cli::start_cli(int argc, char **argv)
         return 1;
     }
 
+    bool apply_sat_lower_bound = true;
     int param_index = 1;
     while (param_index < argc)
     {
@@ -73,6 +75,10 @@ int cli::start_cli(int argc, char **argv)
             time_limit = atoll(argv[param_index+1]);
             param_index++;
         }
+        else if (! strcmp(argv[param_index], "--no-sat"))
+        {
+            apply_sat_lower_bound = false;
+        }
         else
         {
             printf("Unknown argument %s.\n", argv[param_index]);
@@ -94,7 +100,7 @@ int cli::start_cli(int argc, char **argv)
     refer lower_bound;
     refer *coloring = new refer[G->n];
 
-    compute(G, coloring, lower_bound, time_limit);
+    compute(G, coloring, lower_bound, time_limit, apply_sat_lower_bound);
 
     auto end = std::chrono::high_resolution_clock::now();
     total_time += std::chrono::duration_cast<std::chrono::seconds>(end - start).count();

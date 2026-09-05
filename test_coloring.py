@@ -3,6 +3,38 @@ import networkx as nx
 import coloring_utility
 
 
+def test_karate_club():
+    G = nx.karate_club_graph()
+
+    expected_lower_bound = 5
+    expected_colors = 5
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound == expected_lower_bound
+
+
+def test_les_miserables_graph():
+    G = nx.les_miserables_graph()
+
+    expected_lower_bound = 10
+    expected_colors = 10
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound == expected_lower_bound
+
+
 def test_barabasi_albert_100_4_seed_142():
     # ToDo: this seems to fail
     n = 100
@@ -58,6 +90,38 @@ def test_barabasi_albert_100_5_seed_442():
     assert lower_bound == expected_lower_bound
 
 
+def test_erdos_renyi_100_0p1_seed_42():
+    G = nx.erdos_renyi_graph(100, 0.1, seed=42)
+
+    expected_lower_bound = 4
+    expected_colors = 5
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound >= expected_lower_bound
+
+
+def test_erdos_renyi_200_0p1_seed_42():
+    G = nx.erdos_renyi_graph(200, 0.1, seed=42)
+
+    expected_lower_bound = 5
+    expected_colors = 7
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound >= expected_lower_bound
+
+
 def test_barabasi_albert_100000_4_seed_42():
     n = 100000
     w = 4
@@ -83,38 +147,6 @@ def test_barabasi_albert_100000_4_seed_142():
 
     expected_lower_bound = 4
     expected_colors = 5
-
-    try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
-        num_colors = max(colors)
-    except Exception as e:
-        pytest.fail(f"An error occurred in coloring_utility: {e}")
-
-    assert num_colors == expected_colors
-    assert lower_bound >= expected_lower_bound
-
-
-def test_erdos_renyi_100_0p1_seed_42():
-    G = nx.erdos_renyi_graph(100, 0.1, seed=42)
-
-    expected_lower_bound = 4
-    expected_colors = 5
-
-    try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
-        num_colors = max(colors)
-    except Exception as e:
-        pytest.fail(f"An error occurred in coloring_utility: {e}")
-
-    assert num_colors == expected_colors
-    assert lower_bound >= expected_lower_bound
-
-
-def test_erdos_renyi_200_0p1_seed_42():
-    G = nx.erdos_renyi_graph(200, 0.1, seed=42)
-
-    expected_lower_bound = 5
-    expected_colors = 7
 
     try:
         colors, lower_bound = coloring_utility.process(G, time_limit=60)

@@ -211,7 +211,7 @@ bool try_sat_based_lower_bound(graph G, refer k, long long time_limit) {
     return false;
 }
 
-void compute(graph G, refer *coloring, refer &best_lower_bound, long long time_limit)
+void compute(graph G, refer *coloring, refer &best_lower_bound, long long time_limit, bool apply_sat_lower_bound)
 {
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 
@@ -384,12 +384,14 @@ void compute(graph G, refer *coloring, refer &best_lower_bound, long long time_l
         return;
     }
 
-    // attempting to further tighten the lower bound with SAT
-    printf("Attempting to use a SAT-based lower bound...\n");
-    // ToDo: consider what to do if we do not have a time limit
-    while (try_sat_based_lower_bound(G, best_lower_bound, time_limit / 20)) {
-        best_lower_bound++;
-        printf("Found a new lower bound of %d colors.\n", best_lower_bound);
+    if (apply_sat_lower_bound) {
+        // attempting to further tighten the lower bound with SAT
+        printf("Attempting to use a SAT-based lower bound...\n");
+        // ToDo: consider what to do if we do not have a time limit
+        while (try_sat_based_lower_bound(G, best_lower_bound, time_limit / 20)) {
+            best_lower_bound++;
+            printf("Found a new lower bound of %d colors.\n", best_lower_bound);
+        }
     }
 
     while (best_lower_bound <= k)

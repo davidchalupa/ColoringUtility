@@ -9,7 +9,7 @@ long long tabucol(graph G, refer colors, int alpha, int A, int B, long long t_ma
     long long fitness, best_fitness, previous_best_fitness = 0;
     long long old_fitness;
     refer i = 0;
-    refer best[MAX_VERTICES];
+    refer *best = new refer[G->n+1];
 
     bool aux_output = true;
 
@@ -133,6 +133,8 @@ long long tabucol(graph G, refer colors, int alpha, int A, int B, long long t_ma
     tabu_searcher->deinit();
 
     delete(tabu_searcher);
+
+    delete[](best);
 
     return (! found);
 }

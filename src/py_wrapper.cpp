@@ -11,7 +11,7 @@
 namespace py = pybind11;
 
 // returning a vector of colors assigned and the best lower bound found
-std::pair<std::vector<refer>, refer> process(py::object nx_graph, long long time_limit) {
+std::pair<std::vector<refer>, refer> process(py::object nx_graph, long long time_limit, bool apply_sat_lower_bound) {
     // import networkx in C++ to access helper functions
     py::module_ nx = py::module_::import("networkx");
 
@@ -62,7 +62,7 @@ std::pair<std::vector<refer>, refer> process(py::object nx_graph, long long time
     refer lower_bound;
 
     // call the solver. .data() passes the underlying raw refer* pointer
-    compute(g, coloring.data(), lower_bound, time_limit);
+    compute(g, coloring.data(), lower_bound, time_limit, apply_sat_lower_bound);
 
     // cleanup graph properties
     for (int i = 0; i < g->n; ++i) {
@@ -82,6 +82,7 @@ PYBIND11_MODULE(coloring_utility, m) {
         &process,
         "Accepts a networkx graph and computes a coloring using the ColoringUtility solver. Returns a list of colors.",
         py::arg("nx_graph"),
-        py::arg("time_limit") = 60
+        py::arg("time_limit") = 60,
+				py::arg("apply_sat_lower_bound") = true
     );
 }
