@@ -3,23 +3,9 @@ import coloring_utility
 
 from tools import coloring_sat
 
-#n = 100
-#w = 3
-#G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
-
-#n = 100
-#w = 4
-#G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
-
 n = 100
-w = 5
-G = nx.barabasi_albert_graph(n=n, m=w, seed=442)
-
-#n = 100000
-#w = 4
-#G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
-
-#G = nx.erdos_renyi_graph(100, 0.1, seed=42)
+w = 4
+G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
 
 
 print(f"G: |V| = {G.number_of_nodes()}, |E| = {G.number_of_edges()}, d = {nx.density(G):.4f}")
