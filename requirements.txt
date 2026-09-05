@@ -1,0 +1,7 @@
+colorama
+iniconfig
+networkx
+packaging
+pluggy
+Pygments
+pytest

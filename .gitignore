@@ -2,3 +2,5 @@
 CMakeLists.txt.user
 *.pyd
 build
+build_cpp
+.venv
