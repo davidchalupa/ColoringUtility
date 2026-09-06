@@ -59,6 +59,10 @@ def test_les_miserables_graph():
 
 
 def test_smallest_hard_to_color_brelaz():
+    """
+    Smallest 3-colorable graph", for which Brelaz's heuristic gives 4 colors.
+    Janczewski, R., Kubale, M., Manuszewski, K., & Piwakowski, K. (2001). The smallest hard-to-color graph for algorithm DSATUR. Discrete Mathematics, 236(1-3), 151-165.
+    """
     G = load_from_col_file(script_dir / "data" / "badbre.col")
 
     expected_lower_bound = 3
