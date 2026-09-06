@@ -233,23 +233,32 @@ void compute(graph G, refer *coloring, refer &best_lower_bound, long long time_l
 
     printf("Attempting extra trials...\n");
 
+    refer *trial_coloring = new refer[G->n];
+
     int trial_no_improve_index = 0;
     while (trial_no_improve_index < brelaz_extra_trials_no_improve)
     {
-        brelaz_colors = algorithm_brelaz_instance->brelaz_with_heap(G, coloring);
+        brelaz_colors = algorithm_brelaz_instance->brelaz_with_heap(G, trial_coloring);
         if (brelaz_colors < best_coloring_size)
         {
             best_coloring_size = brelaz_colors;
+            for (refer v = 0; v < G->n; v++)
+            {
+                coloring[v] = trial_coloring[v];
+            }
             printf("Found a solution with %d colors with Brelaz's heuristic.\n", brelaz_colors);
             trial_no_improve_index = 0;
         }
         if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - start).count() > time_limit)
         {
             printf("Time limit exceeded.\n");
+            delete[](trial_coloring);
             return;
         }
         trial_no_improve_index++;
     }
+
+    delete[](trial_coloring);
 
     delete(algorithm_brelaz_instance);
 
