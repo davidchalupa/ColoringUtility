@@ -78,6 +78,118 @@ def test_smallest_hard_to_color_brelaz():
     assert lower_bound == expected_lower_bound
 
 
+def test_mycielski_graph_4():
+    G = nx.mycielski_graph(4)
+
+    expected_lower_bound = 4
+    expected_colors = 4
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound == expected_lower_bound
+
+
+def test_mycielski_graph_5():
+    G = nx.mycielski_graph(5)
+
+    expected_lower_bound = 5
+    expected_colors = 5
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound == expected_lower_bound
+
+
+def test_mycielski_graph_6():
+    G = nx.mycielski_graph(6)
+
+    expected_lower_bound = 5
+    expected_colors = 6
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound >= expected_lower_bound
+
+
+def test_leighton_graph_450_5a():
+    G = load_from_col_file(script_dir / "data" / "dimacs" / "le450_5a.col")
+
+    expected_lower_bound = 5
+    expected_colors = 5
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound == expected_lower_bound
+
+
+def test_leighton_graph_450_15c():
+    G = load_from_col_file(script_dir / "data" / "dimacs" / "le450_15c.col")
+
+    expected_lower_bound = 15
+    expected_colors = 15
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound == expected_lower_bound
+
+
+def test_leighton_graph_450_15d():
+    G = load_from_col_file(script_dir / "data" / "dimacs" / "le450_15d.col")
+
+    expected_lower_bound = 15
+    expected_colors = 15
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=120)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound == expected_lower_bound
+
+
+def test_random_graph_dsjc_500p1():
+    G = load_from_col_file(script_dir / "data" / "dimacs" / "dsjc500.1.col")
+
+    expected_lower_bound = 6
+    expected_colors = 12
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound >= expected_lower_bound
+
+
 def test_barabasi_albert_100_4_seed_142():
     n = 100
     w = 4
