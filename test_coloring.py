@@ -1,6 +1,29 @@
+import os
 import pytest
 import networkx as nx
 import coloring_utility
+from pathlib import Path
+
+from tools.graph_loader import load_from_col_file
+
+
+script_dir = Path(os.path.dirname(__file__))
+
+
+def test_davis_southern_women():
+    G = nx.davis_southern_women_graph()
+
+    expected_lower_bound = 2
+    expected_colors = 2
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound == expected_lower_bound
 
 
 def test_karate_club():
@@ -35,8 +58,23 @@ def test_les_miserables_graph():
     assert lower_bound == expected_lower_bound
 
 
+def test_smallest_hard_to_color_brelaz():
+    G = load_from_col_file(script_dir / "data" / "badbre.col")
+
+    expected_lower_bound = 3
+    expected_colors = 3
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound == expected_lower_bound
+
+
 def test_barabasi_albert_100_4_seed_142():
-    # ToDo: this seems to fail
     n = 100
     w = 4
     G = nx.barabasi_albert_graph(n=n, m=w, seed=142)
@@ -120,7 +158,6 @@ def test_erdos_renyi_200_0p1_seed_42():
 
     assert num_colors == expected_colors
     assert lower_bound >= expected_lower_bound
-
 
 def test_barabasi_albert_100000_4_seed_42():
     n = 100000
