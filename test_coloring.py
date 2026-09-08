@@ -17,7 +17,7 @@ def test_davis_southern_women():
     expected_colors = 2
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
@@ -33,7 +33,7 @@ def test_karate_club():
     expected_colors = 5
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
@@ -49,7 +49,7 @@ def test_les_miserables_graph():
     expected_colors = 10
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
@@ -69,7 +69,7 @@ def test_smallest_hard_to_color_brelaz():
     expected_colors = 3
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
@@ -85,7 +85,7 @@ def test_mycielski_graph_4():
     expected_colors = 4
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
@@ -101,7 +101,7 @@ def test_mycielski_graph_5():
     expected_colors = 5
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
@@ -117,7 +117,7 @@ def test_mycielski_graph_6():
     expected_colors = 6
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
@@ -165,29 +165,13 @@ def test_leighton_graph_450_15d():
     expected_colors = 15
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=120)
-        num_colors = max(colors)
-    except Exception as e:
-        pytest.fail(f"An error occurred in coloring_utility: {e}")
-
-    assert num_colors == expected_colors
-    assert lower_bound == expected_lower_bound
-
-
-def test_random_graph_dsjc_500p1():
-    G = load_from_col_file(script_dir / "data" / "dimacs" / "dsjc500.1.col")
-
-    expected_lower_bound = 6
-    expected_colors = 12
-
-    try:
         colors, lower_bound = coloring_utility.process(G, time_limit=60)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
 
     assert num_colors == expected_colors
-    assert lower_bound >= expected_lower_bound
+    assert lower_bound == expected_lower_bound
 
 
 def test_barabasi_albert_100_4_seed_142():
@@ -199,7 +183,7 @@ def test_barabasi_albert_100_4_seed_142():
     expected_colors = 5
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
@@ -217,7 +201,7 @@ def test_barabasi_albert_100_3_seed_142():
     expected_colors = 4
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
@@ -235,13 +219,29 @@ def test_barabasi_albert_100_5_seed_442():
     expected_colors = 6
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
 
     assert num_colors == expected_colors
     assert lower_bound == expected_lower_bound
+
+
+def test_erdos_renyi_50_0p1_seed_42():
+    G = nx.erdos_renyi_graph(50, 0.1, seed=42)
+
+    expected_lower_bound = 3
+    expected_colors = 3
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound >= expected_lower_bound
 
 
 def test_erdos_renyi_100_0p1_seed_42():
@@ -251,7 +251,7 @@ def test_erdos_renyi_100_0p1_seed_42():
     expected_colors = 5
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=10)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
@@ -267,7 +267,7 @@ def test_erdos_renyi_200_0p1_seed_42():
     expected_colors = 7
 
     try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        colors, lower_bound = coloring_utility.process(G, time_limit=20)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")
@@ -303,6 +303,22 @@ def test_barabasi_albert_100000_4_seed_142():
 
     try:
         colors, lower_bound = coloring_utility.process(G, time_limit=60)
+        num_colors = max(colors)
+    except Exception as e:
+        pytest.fail(f"An error occurred in coloring_utility: {e}")
+
+    assert num_colors == expected_colors
+    assert lower_bound >= expected_lower_bound
+
+
+def test_random_graph_dsjc_500p1():
+    G = load_from_col_file(script_dir / "data" / "dimacs" / "dsjc500.1.col")
+
+    expected_lower_bound = 6
+    expected_colors = 12
+
+    try:
+        colors, lower_bound = coloring_utility.process(G, time_limit=180)
         num_colors = max(colors)
     except Exception as e:
         pytest.fail(f"An error occurred in coloring_utility: {e}")

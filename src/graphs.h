@@ -1,8 +1,8 @@
 #ifndef GRAPHS_H
 #define GRAPHS_H
 #include <stdio.h>
+#include <string>
 #include "common.h"
-
 #include "graphs_common.h"
 
 #define MAX_VERTICES_ADJACENCY 3000
@@ -25,6 +25,7 @@ void generate_complementary_graph(graph G);
 void generate_graph_pruned_leaves(graph G);
 void generate_largest_component(graph G);
 void generate_shortcut_graph(graph G, refer k);
-char *get_vertex_label(refer vertex);
+std::string get_vertex_label(refer vertex);
+bool is_vertex_labeled(refer vertex);
 
 #endif // GRAPHS_H

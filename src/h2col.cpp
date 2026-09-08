@@ -10,7 +10,7 @@
 #include "random_generator.h"
 
 #define MAX_POPULATION 3
-#define IMPOSSIBLE MAX_VERTICES + 1
+#define IMPOSSIBLE MAX_VERTICES_H2COL_DEPRECATED + 1
 
 typedef tabu_base *p_tabu_base;
 

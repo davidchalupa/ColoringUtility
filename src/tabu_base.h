@@ -9,10 +9,12 @@
 
 #define CLUSTERS_MAX 2000
 
+#define MAX_VERTICES_CROSSOVER_DEPRECATED 50050
+
 class cluster
 {
 public:
-    long genotype[MAX_VERTICES];
+    long genotype[MAX_VERTICES_CROSSOVER_DEPRECATED];
     long length;
     long long fitness;
     long defects;

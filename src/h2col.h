@@ -4,6 +4,8 @@
 #include "tabu_base.h"
 #include "graphs.h"
 
+#define MAX_VERTICES_H2COL_DEPRECATED 50050
+
 long long h2col(graph G, refer colors, int alpha, int A, int B, long long ls_length, long long *output_t, FILE *f);
 long long newcol(graph G, refer colors, int alpha, int A, int B, long long ls_length, long short_ils_length, long ils_cycles_max, long improvement_cycles_max, long long *output_t, FILE *f);
 

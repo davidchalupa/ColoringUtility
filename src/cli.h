@@ -26,7 +26,6 @@ private:
     unsigned long max_deg,min_deg,triangles;
     unsigned long long current_time,avg_time,avg_iter;
     double avg_deg,stdev_deg;
-    refer degree_distrib[MAX_VERTICES];
     // instance parameters
     refer k;
     unsigned long w,n_max,range,grid;

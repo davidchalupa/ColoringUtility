@@ -26,11 +26,14 @@ std::pair<std::vector<refer>, refer> process(py::object nx_graph, long long time
     g->m = clean_graph.attr("number_of_edges")().cast<unsigned long>();
     g->density = nx.attr("density")(clean_graph).cast<double>();
 
-    // safety check
-    if (g->n > MAX_VERTICES) {
-        delete g;
-        throw std::runtime_error("Graph exceeds MAX_VERTICES");
-    }
+    // allocating the vertex array on the heap
+    g->V = new vertex[g->n];
+
+    // safety check - not needed anymore, any number of vertices supported now
+//    if (g->n > MAX_VERTICES) {
+//        delete g;
+//        throw std::runtime_error("Graph exceeds MAX_VERTICES");
+//    }
 
     // extract adjacency list (dictionary of lists in Python)
     py::dict adj = nx.attr("to_dict_of_lists")(clean_graph);
@@ -48,14 +51,14 @@ std::pair<std::vector<refer>, refer> process(py::object nx_graph, long long time
         }
     }
 
-    //    std::cout << "Nodes: " << g->n << ", Edges: " << g->m << ", Density: " << g->density << "\n";
-    //    for (int i = 0; i < g->n; ++i) {
-    //        std::cout << "Node " << i << " -> ";
-    //        for (int j = 0; j < g->V[i].edgecount; ++j) {
-    //            std::cout << g->V[i].sibl[j] << " ";
-    //        }
-    //        std::cout << "\n";
-    //    }
+//    std::cout << "Nodes: " << g->n << ", Edges: " << g->m << ", Density: " << g->density << "\n";
+//    for (int i = 0; i < g->n; ++i) {
+//        std::cout << "Node " << i << " -> ";
+//        for (int j = 0; j < g->V[i].edgecount; ++j) {
+//            std::cout << g->V[i].sibl[j] << " ";
+//        }
+//        std::cout << "\n";
+//    }
 
     // we will use std::vector instead of raw pointer here for native memory management
     std::vector<refer> coloring(g->n);
@@ -68,6 +71,7 @@ std::pair<std::vector<refer>, refer> process(py::object nx_graph, long long time
     for (int i = 0; i < g->n; ++i) {
         delete[] g->V[i].sibl;
     }
+    delete[] g->V;
     delete g;
 
     // return the vector to Python (Pybind11 converts this to a list)

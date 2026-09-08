@@ -3,8 +3,6 @@
 
 #include "common.h"
 
-#define MAX_VERTICES 5000050
-
 typedef struct VERTEX
 {
     refer edgecount;
@@ -16,9 +14,8 @@ typedef struct GRAPH_DATA
     refer n;
     unsigned long m;
     double density;
-    vertex V[MAX_VERTICES];
+    vertex *V;
 } graph_data;
 typedef graph_data *graph;
-
 
 #endif // GRAPHS_COMMON_H

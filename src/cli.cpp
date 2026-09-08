@@ -90,6 +90,8 @@ int cli::start_cli(int argc, char **argv)
 
     choose_instance();
 
+    refer *degree_distrib = new refer[G->n];
+
     compute_statistics();
 
     srand((unsigned) time(0));
@@ -126,6 +128,8 @@ int cli::start_cli(int argc, char **argv)
     fclose(f);
 
     delete[](coloring);
+
+    delete[](degree_distrib);
 
     if (NULL != G)
     {

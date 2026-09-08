@@ -6,3 +6,5 @@ pluggy
 Pygments
 pytest
 scipy
+numpy
+pybind11

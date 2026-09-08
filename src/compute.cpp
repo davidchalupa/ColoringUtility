@@ -397,7 +397,7 @@ void compute(graph G, refer *coloring, refer &best_lower_bound, long long time_l
         // attempting to further tighten the lower bound with SAT
         printf("Attempting to use a SAT-based lower bound...\n");
         // ToDo: consider what to do if we do not have a time limit
-        while (try_sat_based_lower_bound(G, best_lower_bound, time_limit / 20)) {
+        while (try_sat_based_lower_bound(G, best_lower_bound, time_limit / 10)) {
             best_lower_bound++;
             printf("Found a new lower bound of %d colors.\n", best_lower_bound);
         }
