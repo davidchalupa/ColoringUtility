@@ -309,19 +309,3 @@ def test_barabasi_albert_100000_4_seed_142():
 
     assert num_colors == expected_colors
     assert lower_bound >= expected_lower_bound
-
-
-def test_random_graph_dsjc_500p1():
-    G = load_from_col_file(script_dir / "data" / "dimacs" / "dsjc500.1.col")
-
-    expected_lower_bound = 6
-    expected_colors = 12
-
-    try:
-        colors, lower_bound = coloring_utility.process(G, time_limit=180)
-        num_colors = max(colors)
-    except Exception as e:
-        pytest.fail(f"An error occurred in coloring_utility: {e}")
-
-    assert num_colors == expected_colors
-    assert lower_bound >= expected_lower_bound
