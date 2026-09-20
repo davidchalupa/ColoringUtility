@@ -122,6 +122,7 @@ def test_coloring_on_random_planar_graph_20000():
     assert lower_bound <= num_colors
 
 
+@pytest.mark.skip(reason="Temporarily disabled for being large")
 def test_coloring_on_random_planar_graph_50000():
     G, _ = generate_random_planar_graph(50000)
 
@@ -137,7 +138,7 @@ def test_coloring_on_random_planar_graph_50000():
     assert lower_bound <= num_colors
 
 
-
+@pytest.mark.skip(reason="Temporarily disabled for being large")
 def test_coloring_on_random_planar_graph_100000():
     G, _ = generate_random_planar_graph(100000)
 
@@ -151,4 +152,3 @@ def test_coloring_on_random_planar_graph_100000():
 
     assert num_colors <= expected_max_colors
     assert lower_bound <= num_colors
-

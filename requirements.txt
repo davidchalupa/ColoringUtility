@@ -8,3 +8,4 @@ pytest
 scipy
 numpy
 pybind11
+geopandas
