@@ -73,7 +73,7 @@ world.plot(
     linewidth=0.5
 )
 
-ax.set_title("World Map Colored via NetworkX Graph Coloring", fontsize=16)
+ax.set_title("World Map Colored via ColoringUtility", fontsize=16)
 ax.set_axis_off()
 plt.tight_layout()
 plt.show()
