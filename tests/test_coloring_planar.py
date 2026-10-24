@@ -8,7 +8,6 @@ from tools.graph_generator import generate_random_planar_graph
 
 
 num_small_planar_graphs = 10
-script_dir = Path(os.path.dirname(__file__))
 
 
 @pytest.mark.parametrize("test_case_id", range(1, num_small_planar_graphs + 1))

@@ -7,11 +7,11 @@ from pathlib import Path
 from tools.graph_loader import load_from_col_file
 
 
-script_dir = Path(os.path.dirname(__file__))
+main_repo_dir = Path(os.path.dirname(__file__)).parent
 
 
 def test_random_graph_dsjc_500p1():
-    G = load_from_col_file(script_dir / "data" / "dimacs" / "dsjc500.1.col")
+    G = load_from_col_file(main_repo_dir / "data" / "dimacs" / "dsjc500.1.col")
 
     expected_lower_bound = 6
     expected_colors = 12

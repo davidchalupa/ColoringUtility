@@ -5,9 +5,15 @@ ColoringUtility is a C++-based graph coloring solver with a Python library for c
 
 ## Installation
 
+It is recommended to use ColoringUtility as a Python library. However, it is also available as a pure C++ command
+line application.
+
 ### Python Library
 
-To install ColoringUtility Python library, the following can be used:
+To install ColoringUtility Python library, make sure you have `setuptools` installed. It is recommended to use
+virtualenv to install ColoringUtility.
+
+The following can be simply used for installing the library:
 
 ```bash
 python setup.py build_ext --inplace
@@ -15,13 +21,28 @@ python setup.py build_ext --inplace
 
 ### Building the C++ Solver
 
-ToDo
+#### Windows
+
+There are two prerequisites that need to be met before building ColoringUtility on Windows.
+
+1. Make sure that you have MSYS2 installed - we will need it for `mingw64`.
+2. Make sure that you have CMake installed.
+
+Afterwards, the following script should be sufficient to build the package:
+
+```bash
+build_cpp.bat
+```
+
+If you installed MSYS2 to a different location than the default, then the `.bat` file might need to be tweaked.
 
 ## Structure
 
 - `src` - C++ source code of the solver itself.
 - `example_coloring.py` - An example of how to use ColoringUtility from Python.
-- `example_coloring_with_sat.py` - An example of how to use ColoringUtility from Python, with an extension with an additional SAT-based lower bound.
+- `example_world_map_coloring.py` - An example of how to use ColoringUtility to create a 4-colored world map.
+- `data` - Testing data for the solver in the DIMACS `col` format.
+- `tests` - A rich test suite for the solver using `pytest`, testing the solver on both generated graphs and static testing data.
 
 ## Usage
 

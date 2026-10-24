@@ -7,7 +7,7 @@ from pathlib import Path
 from tools.graph_loader import load_from_col_file
 
 
-script_dir = Path(os.path.dirname(__file__))
+main_repo_dir = Path(os.path.dirname(__file__)).parent
 
 
 def test_davis_southern_women():
@@ -63,7 +63,7 @@ def test_smallest_hard_to_color_brelaz():
     Smallest 3-colorable graph", for which Brelaz's heuristic gives 4 colors.
     Janczewski, R., Kubale, M., Manuszewski, K., & Piwakowski, K. (2001). The smallest hard-to-color graph for algorithm DSATUR. Discrete Mathematics, 236(1-3), 151-165.
     """
-    G = load_from_col_file(script_dir / "data" / "badbre.col")
+    G = load_from_col_file(main_repo_dir / "data" / "badbre.col")
 
     expected_lower_bound = 3
     expected_colors = 3
@@ -127,7 +127,7 @@ def test_mycielski_graph_6():
 
 
 def test_leighton_graph_450_5a():
-    G = load_from_col_file(script_dir / "data" / "dimacs" / "le450_5a.col")
+    G = load_from_col_file(main_repo_dir / "data" / "dimacs" / "le450_5a.col")
 
     expected_lower_bound = 5
     expected_colors = 5
@@ -143,7 +143,7 @@ def test_leighton_graph_450_5a():
 
 
 def test_leighton_graph_450_15c():
-    G = load_from_col_file(script_dir / "data" / "dimacs" / "le450_15c.col")
+    G = load_from_col_file(main_repo_dir / "data" / "dimacs" / "le450_15c.col")
 
     expected_lower_bound = 15
     expected_colors = 15
@@ -159,7 +159,7 @@ def test_leighton_graph_450_15c():
 
 
 def test_leighton_graph_450_15d():
-    G = load_from_col_file(script_dir / "data" / "dimacs" / "le450_15d.col")
+    G = load_from_col_file(main_repo_dir / "data" / "dimacs" / "le450_15d.col")
 
     expected_lower_bound = 15
     expected_colors = 15

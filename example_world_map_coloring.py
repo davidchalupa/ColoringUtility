@@ -7,8 +7,11 @@ import matplotlib.pyplot as plt
 
 # 1. Download and load the Natural Earth dataset manually
 url = "https://naturalearth.s3.amazonaws.com/110m_cultural/ne_110m_admin_0_countries.zip"
-zip_path = "ne_110m_admin_0_countries.zip"
-extract_dir = "ne_110m_data"
+map_dir = "world_map_data"
+zip_path = os.path.join(map_dir, "ne_110m_admin_0_countries.zip")
+extract_dir = os.path.join(map_dir, "ne_110m_data")
+
+os.makedirs("world_map_data", exist_ok=True)
 
 # Download and extract the shapefiles if they don't exist yet
 if not os.path.exists(extract_dir):
