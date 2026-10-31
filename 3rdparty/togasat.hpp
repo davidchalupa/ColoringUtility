@@ -476,25 +476,58 @@ class Solver {
     }
     ifs.close();
   }
-  lbool solve() {
-    model.clear();
-    conflict.clear();
-    if (!ok_) {
-      answer = l_False;
-      return l_False;
+  /************************************************************
+  Modified solve() for ColoringUtility with max_conflicts limit
+  By David Chalupa, 2026
+  ************************************************************/
+  lbool solve(long long max_conflicts = -1) {
+      model.clear();
+      conflict.clear();
+      if (!ok_) {
+        answer = l_False;
+        return l_False;
+      }
+      lbool status = l_Undef;
+      answer = l_Undef;
+      var_inc = kInitialVarIncrement;
+      int curr_restarts = 0;
+
+      long long total_conflicts_used = 0;
+
+      while (status == l_Undef) {
+        double rest_base = luby(kRestartIncrement, curr_restarts);
+        double restart_budget = rest_base * kRestartFirst;
+
+        // If a global max_conflicts limit is specified, clamp the restart budget
+        if (max_conflicts > 0) {
+          long long remaining = max_conflicts - total_conflicts_used;
+          if (remaining <= 0) {
+            answer = l_Undef;
+            return l_Undef; // Hit conflict limit
+          }
+          if (restart_budget > remaining) {
+            restart_budget = remaining;
+          }
+        }
+
+        status = search(restart_budget);
+
+        // If search returns l_Undef, it exhausted its allocated budget for this restart epoch
+        if (status == l_Undef) {
+          total_conflicts_used += static_cast<long long>(restart_budget);
+
+          if (max_conflicts > 0 && total_conflicts_used >= max_conflicts) {
+            answer = l_Undef;
+            return l_Undef; // Hit conflict limit
+          }
+        }
+
+        curr_restarts++;
+      }
+
+      answer = status;
+      return status;
     }
-    lbool status = l_Undef;
-    answer = l_Undef;
-    var_inc = kInitialVarIncrement;
-    int curr_restarts = 0;
-    while (status == l_Undef) {
-      double rest_base = luby(kRestartIncrement, curr_restarts);
-      status = search(rest_base * kRestartFirst);
-      curr_restarts++;
-    }
-    answer = status;
-    return status;
-  }
 
   void addClause(std::vector<int> &clause) {
     std::vector<Lit> lits;
